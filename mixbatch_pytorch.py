@@ -3,8 +3,7 @@ import tensorflow as tf
 import keras.backend as K
 from keras.layers import Layer
 from tensorflow.python.keras.utils.tf_utils import smart_cond
-from torch.nn import Dropout
-import torch
+
 class MixBatch(Layer):
     def __init__(self,batch_size, alpha=0.2, **kwargs) -> None:
         self.alpha = alpha
@@ -19,7 +18,7 @@ class MixBatch(Layer):
     def mixup_tf(self, features):
         # do mixup here
         # tensorflow version
-        # print("features",features.shape)
+        print("features",features.shape)
         input_shape = K.int_shape(features)
         mix = self.get_beta(features.shape)
         try:
@@ -111,46 +110,3 @@ class MixBatch(Layer):
 #         }
 #         base_config = super().get_config()
 #         return dict(list(base_config.items()) + list(config.items()))
-
-class MixBatch_torch(Dropout):
-    # @weak_script_method
-    def forward(self, input):
-        return self.mixup(input, self.p, self.training)
-
-
-    def mixup(self,x, p=0.2, training=True,use_cuda=True):
-        # type: (Tensor, float, bool, bool) -> Tensor
-        r"""
-        During training, randomly zeroes some of the elements of the input
-        tensor with probability :attr:`p` using samples from a Bernoulli
-        distribution.
-
-        See :class:`~torch.nn.Dropout` for details.
-
-        Args:
-            p: probability of an element to be zeroed. Default: 0.5
-            training: apply dropout if is ``True``. Default: ``True``
-            inplace: If set to ``True``, will do this operation in-place. Default: ``False``
-        """
-        # if p < 0. or p > 1.:
-        #     raise ValueError("mixup probability has to be between 0 and 1, "
-        #                     "but got {}".format(p))
-
-        '''Returns mixed inputs, pairs of targets, and lambda'''
-        alpha = 0.2
-        if alpha > 0:
-            lam = np.random.beta(alpha, alpha)
-        else:
-            lam = 1
-
-        batch_size = x.size()[0]
-        if use_cuda:
-            index = torch.randperm(batch_size).cuda()
-        else:
-            index = torch.randperm(batch_size)
-
-        mixed_x = lam * x + (1 - lam) * x[index, :]
-        return mixed_x
-
-
-
