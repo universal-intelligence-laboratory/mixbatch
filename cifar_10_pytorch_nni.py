@@ -15,7 +15,10 @@ torch.backends.cudnn.deterministic = True
 np.random.seed(SEED)
 
 
-writer = SummaryWriter(log_dir='res50_fix_exc/input')
+RCV_CONFIG = nni.get_next_parameter()
+
+
+writer = SummaryWriter(log_dir='res50_fix_exc/NAS_mbat{}'.format(RCV_CONFIG['mb']))
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 transform = transforms.Compose(
     [transforms.ToTensor(),
@@ -36,9 +39,6 @@ classes = ('plane', 'car', 'bird', 'cat',
 
 import torch.nn as nn
 import torch.nn.functional as F
-
-RCV_CONFIG = nni.get_next_parameter()
-
 net = ResNet50(RCV_CONFIG)
 net = net.to(device)
 
@@ -76,7 +76,7 @@ for epoch in range(total_epoch):  # loop over the dataset multiple times
         #           (epoch + 1, i + 1, running_loss / 2000))
         #     running_loss = 0.0
 
-        if i % 100 == 99:
+        if i % 1000 == 999:
             global_step = epoch*step_per_epoch + i
             writer.add_scalar('train_loss', loss, global_step)
 
