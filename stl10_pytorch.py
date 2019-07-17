@@ -14,21 +14,34 @@ torch.backends.cudnn.deterministic = True
 np.random.seed(SEED)
 
 
-writer = SummaryWriter(log_dir='res50_fix_exc/input')
+writer = SummaryWriter(log_dir='stl10_res50_runs/baseline')
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
+
+
+from STL10.stl10_input import  LABEL_PATH,DATA_PATH,read_all_images,read_labels  # test to check if the whole dataset is read correctly
+
+LABEL_PATH = LABEL_PATH.replace("./data","./STL10/data")
+DATA_PATH = DATA_PATH.replace("./data","./STL10/data")
+images = read_all_images(DATA_PATH)
+print(images.shape)
+
+labels = read_labels(LABEL_PATH)
+print(labels.shape)
+ 
+# 1/0
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 transform = transforms.Compose(
     [transforms.ToTensor(),
      transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
 
-trainset = torchvision.datasets.CIFAR10(root='./data', train=True,
-                                        download=False, transform=transform)
-testloader = torch.utils.data.DataLoader(trainset, batch_size=4,
-                                          shuffle=True, num_workers=0)
+images = torch.from_numpy(images)
+labels = torch.from_numpy(labels)
 
-testset = torchvision.datasets.CIFAR10(root='./data', train=False,
-                                       download=False, transform=transform)
-trainloader = torch.utils.data.DataLoader(testset, batch_size=4,
-                                         shuffle=False, num_workers=0)
+images,labels=images.type(torch.FloatTensor),labels.type(torch.FloatTensor)
+dataset = torch.utils.data.TensorDataset(images, labels)
+
+trainloader = torch.utils.data.DataLoader(dataset, batch_size=4,shuffle=True, num_workers=0)
 
 classes = ('plane', 'car', 'bird', 'cat',
            'deer', 'dog', 'frog', 'horse', 'ship', 'truck')

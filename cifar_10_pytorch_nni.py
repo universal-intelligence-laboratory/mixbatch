@@ -6,6 +6,7 @@ from tensorboardX import SummaryWriter
 from tqdm import tqdm
 import numpy as np
 from models import ResNet50
+import nni
 
 SEED = 0
 torch.manual_seed(SEED)
@@ -36,35 +37,9 @@ classes = ('plane', 'car', 'bird', 'cat',
 import torch.nn as nn
 import torch.nn.functional as F
 
+RCV_CONFIG = nni.get_next_parameter()
 
-class Net(nn.Module):
-    def __init__(self):
-        super(Net, self).__init__()
-        self.conv1 = nn.Conv2d(3, 6, 5)
-        self.pool = nn.MaxPool2d(2, 2)
-        self.conv2 = nn.Conv2d(6, 16, 5)
-        self.fc1 = nn.Linear(16 * 5 * 5, 120)
-        self.fc2 = nn.Linear(120, 84)
-        self.fc3 = nn.Linear(84, 10)
-        self.mb = MixBatch_torch(p=0.2)
-
-    def forward(self, x):
-        x = self.conv1(x)
-        x = F.relu(x)
-        x = self.pool(x)
-        x = self.conv2(x)
-        x = F.relu(x)
-        x = self.pool(x)
-        x = x.view(-1, 16 * 5 * 5)
-        x = self.fc1(x)
-        x = F.relu(x)
-        x = self.mb(x)
-        x = self.fc2(x)
-        x = F.relu(x)
-        x = self.fc3(x)
-        return x
-
-net = ResNet50()
+net = ResNet50(RCV_CONFIG)
 net = net.to(device)
 
 print(torch.cuda.is_available())
@@ -76,6 +51,7 @@ optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
 step_per_epoch = len(trainloader)
 total_epoch = 100
 
+best_acc = 0.0
 for epoch in range(total_epoch):  # loop over the dataset multiple times
 
     net.train()
@@ -105,6 +81,7 @@ for epoch in range(total_epoch):  # loop over the dataset multiple times
             writer.add_scalar('train_loss', loss, global_step)
 
 
+
     net.eval()
     test_loss = 0
     correct = 0
@@ -123,6 +100,10 @@ for epoch in range(total_epoch):  # loop over the dataset multiple times
     global_step = epoch*step_per_epoch
     writer.add_scalar('eval_loss', loss, global_step)
     writer.add_scalar('eval_acc', acc, global_step)
+    nni.report_intermediate_result(acc)
+    best_acc = max(best_acc,acc)
+
+nni.report_final_result(best_acc)
 
 
 print('Finished Training')
