@@ -1,8 +1,8 @@
 authorName: default
 experimentName: mixbatch_pytorch_cifar10
-trialConcurrency: 4
+trialConcurrency: 8
 maxExecDuration: 100h
-maxTrialNum: 10
+maxTrialNum: 1000
 #choice: local, remote, pai
 trainingServicePlatform: local
 searchSpacePath: search_space.json
@@ -11,7 +11,7 @@ useAnnotation: false
 tuner:
   #choice: TPE, Random, Anneal, Evolution, BatchTuner, MetisTuner
   #SMAC (SMAC should be installed through nnictl)
-  builtinTunerName: SMAC
+  builtinTunerName: TPE
   classArgs:
     #choice: maximize, minimize
     optimize_mode: maximize

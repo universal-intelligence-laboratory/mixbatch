@@ -11,3 +11,7 @@ auto-adjust alpha of mixup layer:
 NAS run for best insert layer(s):
 - call nni
 - call nni with multi layer selected
+
+
+# maya X NNI
+无尽之海
