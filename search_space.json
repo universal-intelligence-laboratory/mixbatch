@@ -1,4 +1,4 @@
 {
-    "mb":{"_type":"choice", "_value":[0,1,2,3,4,5]},
+    "mb":{"_type":"quniform", "_value":[0,5,1]},
     "mbr":{"_type":"quniform", "_value":[0,4,1]}
 }

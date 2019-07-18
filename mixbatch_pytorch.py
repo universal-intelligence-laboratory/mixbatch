@@ -28,7 +28,7 @@ class MixBatch_torch(Dropout):
 
         '''Returns mixed inputs, pairs of targets, and lambda'''
         if training==True:
-            alpha = 0.2
+            alpha = p
             if alpha > 0:
                 self.lam = np.random.beta(alpha, alpha)
             else:
@@ -48,7 +48,7 @@ class MixBatch_torch(Dropout):
 
 
 def test():
-    net = MixBatch_torch(p=0.2)
+    net = MixBatch_torch(p=0.1)
     for i in range(100):
         x = torch.randn(2,1,2)
         y = net(x)
