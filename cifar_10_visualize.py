@@ -15,6 +15,22 @@ torch.backends.cudnn.deterministic = True
 np.random.seed(SEED)
 
 
+def mean_std(loss_list,writer,global_step,name="loss"):
+    min_total = 20
+    max_elements = 30
+    min_elements = int(min_total*0.3)
+    data_len = len(loss_list)
+
+    if data_len >= min_total:
+        mean_len = int(data_len*0.3)
+        mean_len = min(mean_len,max_elements)
+        data = loss_list[-1*mean_len:]
+        mean = np.mean(data)
+        std = np.std(data)
+        writer.add_scalar(name+'_mean', mean, global_step)
+        writer.add_scalar(name+'_std', std, global_step)
+
+
 def conv_visualize(model,writer,global_step):
     # 可视化卷积核
     # global_step = epoch*step_per_epoch + step
@@ -107,6 +123,7 @@ optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
 step_per_epoch = len(trainloader)
 total_epoch = 1000
 
+loss_list = []  
 for epoch in range(total_epoch):  # loop over the dataset multiple times
 
     net.train()
@@ -124,6 +141,7 @@ for epoch in range(total_epoch):  # loop over the dataset multiple times
         loss.backward()
         optimizer.step()
 
+        loss_list.append(loss.item())
         # print statistics
         running_loss += loss.item()
         # if i % 2000 == 1999:    # print every 2000 mini-batches
@@ -132,11 +150,12 @@ for epoch in range(total_epoch):  # loop over the dataset multiple times
         #     running_loss = 0.0
 
         global_step = epoch*step_per_epoch + i
-        if i % 100 == 99:
+        if i % 10 == 9:
             writer.add_scalar('train_loss', loss, global_step)
             trace = torch.trace(net.fc2.weight).to('cpu').detach().numpy()
             writer.add_scalar('trace', trace, global_step)
-            conv_visualize(net,writer,global_step)
+            # conv_visualize(net,writer,global_step)
+            mean_std(loss_list,writer,global_step)
 
     net.eval()
     with torch.no_grad():
