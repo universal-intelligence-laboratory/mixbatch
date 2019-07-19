@@ -79,9 +79,10 @@ class ResNet(nn.Module):
         self.linear = nn.Linear(512*block.expansion, num_classes)
         if self.nas_config['mbr'] == 0:
             assert (self.nas_config['mb']==0)
-            self.nas_config['mb']=-1
+            self.nas_config['mb']=[-1]
             
         self.mb = MixBatch(p=0.1*self.nas_config['mbr'])
+        self.mb2 = MixBatch(p=0.1*self.nas_config['mbr'])
 
     def _make_layer(self, block, planes, num_blocks, stride):
         strides = [stride] + [1]*(num_blocks-1)
@@ -93,29 +94,29 @@ class ResNet(nn.Module):
 
     def forward(self, x):
         out = x
-        if self.nas_config['mb'] == 0:
+        if 0 in self.nas_config['mb']:
             out = self.mb(out)
 
         out = F.relu(self.bn1(self.conv1(out)))
         out = self.layer1(out)
-        if self.nas_config['mb'] == 1:
+        if 1 in self.nas_config['mb']:
             out = self.mb(out)
 
         out = self.layer2(out)
-        if self.nas_config['mb'] == 2:
+        if 2 in self.nas_config['mb']:
             out = self.mb(out)
 
         out = self.layer3(out)
-        if self.nas_config['mb'] == 3:
+        if 3 in self.nas_config['mb']:
             out = self.mb(out)
 
         out = self.layer4(out)
-        if self.nas_config['mb'] == 4:
+        if 4 in self.nas_config['mb']:
             out = self.mb(out)
 
         out = F.avg_pool2d(out, 4)
-        if self.nas_config['mb'] == 5:
-            out = self.mb(out)
+        if 5 in self.nas_config['mb']:
+            out = self.mb2(out)
 
         out = out.view(out.size(0), -1)
         out = self.linear(out)
