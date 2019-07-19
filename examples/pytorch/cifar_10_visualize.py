@@ -156,6 +156,8 @@ for epoch in range(total_epoch):  # loop over the dataset multiple times
             writer.add_scalar('trace', trace, global_step)
             # conv_visualize(net,writer,global_step)
             mean_std(loss_list,writer,global_step)
+            for param_group in optimizer.param_groups:
+                writer.add_scalar('lr', param_group['lr'], global_step)
 
     net.eval()
     with torch.no_grad():

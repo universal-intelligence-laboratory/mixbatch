@@ -1,0 +1,7 @@
+# Pycharm files
+.idea/
+# The actual dataset
+data/
+# pyc files
+*.pyc
+/img/

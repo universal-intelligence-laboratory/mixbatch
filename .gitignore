@@ -3,4 +3,4 @@ mnist/
 __pycache__/
 */__pycache__/
 data/
-
+mini_exc/
