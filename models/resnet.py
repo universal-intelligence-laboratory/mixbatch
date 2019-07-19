@@ -9,7 +9,7 @@ Reference:
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from mixbatch_pytorch import MixBatch_torch
+from mixbatch import MixBatch
 
 
 class BasicBlock(nn.Module):
@@ -81,7 +81,7 @@ class ResNet(nn.Module):
             assert (self.nas_config['mb']==0)
             self.nas_config['mb']=-1
             
-        self.mb = MixBatch_torch(p=0.1*self.nas_config['mbr'])
+        self.mb = MixBatch(p=0.1*self.nas_config['mbr'])
 
     def _make_layer(self, block, planes, num_blocks, stride):
         strides = [stride] + [1]*(num_blocks-1)
@@ -121,6 +121,35 @@ class ResNet(nn.Module):
         out = self.linear(out)
         return out
 
+
+    def get_feature(self, x):
+        out = x
+        if self.nas_config['mb'] == 0:
+            out = self.mb(out)
+
+        out = F.relu(self.bn1(self.conv1(out)))
+        out = self.layer1(out)
+        if self.nas_config['mb'] == 1:
+            out = self.mb(out)
+
+        out = self.layer2(out)
+        if self.nas_config['mb'] == 2:
+            out = self.mb(out)
+
+        out = self.layer3(out)
+        if self.nas_config['mb'] == 3:
+            out = self.mb(out)
+
+        out = self.layer4(out)
+        if self.nas_config['mb'] == 4:
+            out = self.mb(out)
+
+        out = F.avg_pool2d(out, 4)
+        if self.nas_config['mb'] == 5:
+            out = self.mb(out)
+
+        out = out.view(out.size(0), -1)
+        return out
 
 def ResNet18():
     return ResNet(BasicBlock, [2,2,2,2])

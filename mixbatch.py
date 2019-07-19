@@ -2,7 +2,7 @@ import numpy as np
 from torch.nn import Dropout
 import torch
 
-class MixBatch_torch(Dropout):
+class MixBatch(Dropout):
     # @weak_script_method
     def forward(self, input):
         return self.mixup(input, self.p, self.training)

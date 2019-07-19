@@ -17,7 +17,7 @@ torch.backends.cudnn.deterministic = True
 np.random.seed(SEED)
 
 
-writer = SummaryWriter(log_dir='old/input')
+writer = SummaryWriter(log_dir='old/baseline')
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 transform = transforms.Compose(
     [transforms.ToTensor(),
@@ -38,8 +38,8 @@ classes = ('plane', 'car', 'bird', 'cat',
 
 
 
-config = {"mb":0,"mbr":2}
-# config = {"mb":0,"mbr":0}
+# config = {"mb":0,"mbr":2}
+config = {"mb":0,"mbr":0}
 
 net = ResNet50(config)
 net = net.to(device)
