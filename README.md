@@ -2,6 +2,12 @@
 The mixbatch act as a interpolate to feature space, to make a soft decition margain to enhance generalization.
 And the good part is, you can apply mixbatch on any layer you like, any.
 
+## mixbatch性能解释
+- mixbatch可以在输入以及最后的dense进行应用
+- mixbatch通过提供特征空间和输入空间的插值，可以更清晰和稳定地描述分类边界，并生成更多随机样本，防止过拟合
+- 使用CIFAR10，测试集作为训练集，训练集作为测试集，mixbatch可以提升ResNet50网络的达3%，训练时间相同
+  ![](./pictures/eval_acc.png)
+
 ## TODO
 auto-adjust alpha of mixup layer:
 - with train noise of layer?
@@ -12,6 +18,8 @@ auto-adjust alpha of mixup layer:
 - mixbatch，最好是放在input，其次是放在网络的后面，提特征的那几层/block最好不要动
 - 放前面的时候，要用较低的alpha，也就是说混合的比例更保持原样，放后面的时候，要使用更高的alpha
 - 越往后，alpha越高，混淆越多
+
+
 
 
 # 模型解释能力
