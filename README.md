@@ -11,9 +11,11 @@ And the good part is, you can apply mixbatch on any layer you like, any.
   baseline:
   ![](./pictures/baseline.png)
 
-  最后一层做了mixbatch：
-  ![](./pictures/last_layer_mixbatch.png)
+  最后一层做了mixbatch，注意观察灰蓝色那个类，被归到更小的地方去了，显著改善了集中度：
+  ![](./pictures/last_layer_mixbatch.png)  
 
+
+  虽然最后一层做了mixbatch的性能并不是最好的，但是可以通过这个例子看出mixbatch是怎样影响模型的输出的，从而，我们可以得出mixbatch能更好地描绘样本点之间的分界面的结论。
   
 
 
@@ -70,6 +72,8 @@ def conv_visualize(model,writer,global_step):
 - writer.add_embedding(features, metadata=label,global_step=i)  要看最新的emb必须重启tb，tbv1.12不能用
 - 每个epoch的embedding写完后，可以进行一定的t-sne步骤从而进行效果的大概分析
 - 考虑到对immediate feature的需要，要么就用tensorflow sess.run抓回来，要么就用pytorch或者tensorflow动态图模式，keras很麻烦
+- tsne的用法：开尽量小的learning rate，2D，跑到收敛
+- 一定要截图下来后再比较
 - code:  
 ```
     net.eval()
