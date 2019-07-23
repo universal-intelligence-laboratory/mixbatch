@@ -7,6 +7,15 @@ And the good part is, you can apply mixbatch on any layer you like, any.
 - mixbatch通过提供特征空间和输入空间的插值，可以更清晰和稳定地描述分类边界，并生成更多随机样本，防止过拟合
 - 使用CIFAR10，测试集作为训练集，训练集作为测试集，mixbatch可以提升ResNet50网络的达3%，训练时间相同
   ![](./pictures/eval_acc.png)
+- 使用mixbatch后，feature的集中性以及边界会更清晰，下面可视化的是最后一层dense的PCA：  
+  baseline:
+  ![](./pictures/baseline.png)
+
+  最后一层做了mixbatch：
+  ![](./pictures/last_layer_mixbatch.png)
+
+  
+
 
 ## TODO
 auto-adjust alpha of mixup layer:
