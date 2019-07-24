@@ -2,6 +2,8 @@
 The mixbatch act as a interpolate to feature space, to make a soft decition margain to enhance generalization.
 And the good part is, you can apply mixbatch on any layer you like, any.
 
+- 这种少样本学习的增强方法可以跟NAS很良好地结合，从而获得很好的效果，因为NAS经常也是在少样本上面进行网络搜索的
+
 ## mixbatch性能解释
 - mixbatch可以在输入以及最后的dense进行应用
 - mixbatch通过提供特征空间和输入空间的插值，可以更清晰和稳定地描述分类边界，并生成更多随机样本，防止过拟合
